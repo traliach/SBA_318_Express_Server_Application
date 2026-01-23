@@ -1,0 +1,44 @@
+import express from "express";
+import healthRoutes from "./routes/health.js";
+import booksApiRoutes from "./routes/api/books.js";
+import authorsApiRoutes from "./routes/api/authors.js";
+import reviewsApiRoutes from "./routes/api/reviews.js";
+import booksViewRoutes from "./routes/views/books.js";
+import notFound from "./middleware/notFound.js";
+import errorHandler from "./middleware/errorHandler.js";
+import requestId from "./middleware/requestId.js";
+import logger from "./middleware/logger.js";
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// View engine
+app.set("view engine", "ejs");
+
+// Static files
+app.use(express.static("public"));
+
+// Custom middleware
+app.use(requestId);
+app.use(logger);
+
+// Body parsers (so req.body works)
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Routes
+app.use("/health", healthRoutes);
+app.use("/api/books", booksApiRoutes);
+app.use("/api/authors", authorsApiRoutes);
+app.use("/api/reviews", reviewsApiRoutes);
+app.use("/books", booksViewRoutes);
+
+// 404 handler (must be AFTER routes)
+app.use(notFound);
+
+// Error handler (must be LAST)
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});

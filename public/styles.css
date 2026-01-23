@@ -1,0 +1,61 @@
+/* simple, student-friendly styling */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: #0b1220;
+  color: #e6edf7;
+}
+
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+a { color: #a7c7ff; }
+
+.container { width: min(900px, 92vw); margin: 32px auto; }
+.header h1 { margin: 0 0 6px; }
+.muted { color: #b6c2d8; }
+
+.card {
+  background: #121b2e;
+  border: 1px solid #213055;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.form label { display: grid; gap: 6px; font-size: 14px; }
+
+.form input,
+.form select {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #2b3c67;
+  background: #0b1220;
+  color: #e6edf7;
+}
+
+.form button {
+  grid-column: 1 / -1;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #2b3c67;
+  background: #2a5bd7;
+  color: white;
+  cursor: pointer;
+}
+
+.table { width: 100%; border-collapse: collapse; }
+
+.table th,
+.table td {
+  border-bottom: 1px solid #213055;
+  padding: 10px 8px;
+  text-align: left;
+}
