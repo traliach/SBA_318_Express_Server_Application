@@ -1,3 +1,4 @@
+// Helpers for IDs, filtering, and validation
 export function newId(items) {
   const max = items.reduce((m, item) => Math.max(m, Number(item.id) || 0), 0);
   return max + 1;
@@ -8,6 +9,7 @@ export function findById(items, id) {
   return items.find((x) => Number(x.id) === num);
 }
 
+// Filter books by query params (genre, authorId, q)
 export function filterBooks(allBooks, query) {
   let out = [...allBooks];
 
@@ -28,6 +30,7 @@ export function filterBooks(allBooks, query) {
   return out;
 }
 
+// Validate required fields for a new book
 export function validateNewBook(payload) {
   const errors = [];
 
@@ -50,6 +53,7 @@ export function validateNewBook(payload) {
   };
 }
 
+// Validate fields for partial updates
 export function validateBookPatch(payload) {
   const errors = [];
 
@@ -83,6 +87,7 @@ export function validateBookPatch(payload) {
   return { ok: errors.length === 0, errors, value: out };
 }
 
+// Validate required fields for a new author
 export function validateNewAuthor(payload) {
   const errors = [];
   const name = String(payload.name || "").trim();
@@ -91,6 +96,7 @@ export function validateNewAuthor(payload) {
   return { ok: errors.length === 0, errors, value: { name } };
 }
 
+// Validate fields for author rename
 export function validateAuthorPatch(payload) {
   const errors = [];
   const out = {};

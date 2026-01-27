@@ -13,7 +13,7 @@ import logger from "./middleware/logger.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// View engine
+// View engine (EJS)
 app.set("view engine", "ejs");
 
 // Static files
@@ -23,12 +23,15 @@ app.use(express.static("public"));
 app.use(requestId);
 app.use(logger);
 
-// Body parsers (so req.body works)
+// Parse JSON + form bodies (so req.body works)
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/health", healthRoutes);
+app.get("/", (req, res) => {
+  res.redirect(303, "/books");
+});
 app.use("/api/books", booksApiRoutes);
 app.use("/api/authors", authorsApiRoutes);
 app.use("/api/reviews", reviewsApiRoutes);

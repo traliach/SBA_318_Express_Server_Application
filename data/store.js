@@ -1,3 +1,4 @@
+// In-memory data (resets when the server restarts)
 export const authors = [
   { id: 1, name: "Jane Austen" },
   { id: 2, name: "George Orwell" },

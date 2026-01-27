@@ -4,6 +4,7 @@ import { findById, newId, validateAuthorPatch, validateNewAuthor } from "../../d
 
 const router = Router();
 
+// Render the Authors management page
 router.get("/", (req, res) => {
   res.render("authors", { authors, error: null });
 });
@@ -19,6 +20,7 @@ router.post("/", (req, res) => {
   res.redirect(303, "/authors");
 });
 
+// Rename an author (two-step form action)
 router.post("/:authorId/edit", (req, res) => {
   const author = findById(authors, req.params.authorId);
   if (!author) return res.status(404).render("error", { status: 404, message: "Author not found" });
@@ -32,6 +34,7 @@ router.post("/:authorId/edit", (req, res) => {
   res.redirect(303, "/authors");
 });
 
+// Delete an author (blocked if books still reference them)
 router.post("/:authorId/delete", (req, res) => {
   const id = Number(req.params.authorId);
   const hasBooks = books.some((b) => Number(b.authorId) === id);
