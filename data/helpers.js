@@ -82,3 +82,11 @@ export function validateBookPatch(payload) {
 
   return { ok: errors.length === 0, errors, value: out };
 }
+
+export function validateNewAuthor(payload) {
+  const errors = [];
+  const name = String(payload.name || "").trim();
+  if (!name) errors.push("name is required");
+
+  return { ok: errors.length === 0, errors, value: { name } };
+}

@@ -50,6 +50,18 @@
       </section>
 
       <section class="card">
+        <h2>Add an author</h2>
+        <form class="form" action="/api/authors" method="POST">
+          <label>
+            Name
+            <input name="name" required placeholder="Barack Obama" />
+          </label>
+          <button type="submit">Create author</button>
+        </form>
+        <p class="muted">After creating an author, use the dropdown above to add a book.</p>
+      </section>
+
+      <section class="card">
         <h2>Current books</h2>
         <% if (!books.length) { %>
           <p class="muted">No books yet.</p>
