@@ -26,14 +26,16 @@
 
           <label>
             Author
-            <select name="authorId">
-              <% authors.forEach((a) => { %>
-                <option value="<%= a.id %>" <%= Number(a.id) === Number(book.authorId) ? "selected" : "" %>>
-                  <%= a.name %>
-                </option>
-              <% }) %>
-            </select>
-            <span class="muted"><a href="/authors">Manage authors</a></span>
+            <div class="field-row">
+              <select name="authorId">
+                <% authors.forEach((a) => { %>
+                  <option value="<%= a.id %>" <%= Number(a.id) === Number(book.authorId) ? "selected" : "" %>>
+                    <%= a.name %>
+                  </option>
+                <% }) %>
+              </select>
+              <a class="btn" href="/authors">Manage authors</a>
+            </div>
           </label>
 
           <label>
