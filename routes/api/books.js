@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authors, books } from "../../data/store.js";
-import { filterBooks, findById, newId, validateNewBook } from "../../data/helpers.js";
+import { filterBooks, findById, newId, validateBookPatch, validateNewBook } from "../../data/helpers.js";
 
 const router = Router();
 
@@ -38,6 +38,34 @@ router.post("/", (req, res) => {
 
   books.push(book);
   res.status(201).json(book);
+});
+
+// PATCH /api/books/:bookId (edit book)
+router.patch("/:bookId", (req, res) => {
+  const book = findById(books, req.params.bookId);
+  if (!book) return res.status(404).json({ error: "Book not found" });
+
+  const validated = validateBookPatch(req.body || {});
+  if (!validated.ok) {
+    return res.status(400).json({ error: "Validation failed", details: validated.errors });
+  }
+
+  if (validated.value.authorId !== undefined) {
+    const author = findById(authors, validated.value.authorId);
+    if (!author) return res.status(400).json({ error: "authorId does not exist" });
+  }
+
+  Object.assign(book, validated.value);
+  res.json(book);
+});
+
+// DELETE /api/books/:bookId
+router.delete("/:bookId", (req, res) => {
+  const idx = books.findIndex((b) => Number(b.id) === Number(req.params.bookId));
+  if (idx === -1) return res.status(404).json({ error: "Book not found" });
+
+  const deleted = books.splice(idx, 1)[0];
+  res.json(deleted);
 });
 
 export default router;

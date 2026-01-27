@@ -49,3 +49,36 @@ export function validateNewBook(payload) {
     value: { title, authorId, genre: genre || "unknown", year },
   };
 }
+
+export function validateBookPatch(payload) {
+  const errors = [];
+
+  // Only validate fields that were provided.
+  const out = {};
+
+  if (payload.title !== undefined) {
+    const title = String(payload.title || "").trim();
+    if (!title) errors.push("title cannot be empty");
+    else out.title = title;
+  }
+
+  if (payload.authorId !== undefined) {
+    const authorId = Number(payload.authorId);
+    if (!authorId || Number.isNaN(authorId)) errors.push("authorId must be a valid number");
+    else out.authorId = authorId;
+  }
+
+  if (payload.genre !== undefined) {
+    const genre = String(payload.genre || "").trim();
+    out.genre = genre || "unknown";
+  }
+
+  if (payload.year !== undefined) {
+    const yearRaw = payload.year;
+    const year = yearRaw === "" || yearRaw == null ? undefined : Number(yearRaw);
+    if (year !== undefined && (Number.isNaN(year) || year < 0)) errors.push("year must be a valid number");
+    else out.year = year;
+  }
+
+  return { ok: errors.length === 0, errors, value: out };
+}
