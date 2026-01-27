@@ -84,6 +84,10 @@ Add your screenshots in a `screenshots/` folder and update the paths below:
 
 ```
 ![Books page](screenshots/books-page.png)
+
+
 ![Edit book](screenshots/edit-book.png)
+
+
 ![Authors page](screenshots/authors-page.png)
 ```
