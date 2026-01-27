@@ -10,7 +10,7 @@
     <main class="container">
       <header class="header">
         <h1>Books</h1>
-        <p class="muted">Server-rendered page with a form that posts to <code>/api/books</code>.</p>
+        <p class="muted">Manage your mini library: add authors, add books, and remove books.</p>
       </header>
 
       <section class="card">
@@ -22,7 +22,7 @@
           </label>
           <button type="submit">Create author</button>
         </form>
-        <p class="muted">After creating an author, use the dropdown below to add a book.</p>
+        <p class="muted">Tip: create the author first, then pick them when adding a book.</p>
       </section>
 
       <section class="card">
@@ -57,12 +57,13 @@
         </form>
 
         <p class="muted">
-          After you submit, you’ll be redirected back here and the new book will appear in the list.
+          After you submit, the new book will appear in the list.
         </p>
       </section>
 
       <section class="card">
         <h2>Current books</h2>
+        <p class="muted">This app uses in-memory data (restarting the server resets it).</p>
         <% if (!books.length) { %>
           <p class="muted">No books yet.</p>
         <% } else { %>
