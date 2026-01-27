@@ -14,6 +14,18 @@
       </header>
 
       <section class="card">
+        <h2>Add an author</h2>
+        <form class="form" action="/api/authors" method="POST">
+          <label>
+            Name
+            <input name="name" required placeholder="Barack Obama" />
+          </label>
+          <button type="submit">Create author</button>
+        </form>
+        <p class="muted">After creating an author, use the dropdown below to add a book.</p>
+      </section>
+
+      <section class="card">
         <h2>Add a book</h2>
         <form class="form" action="/api/books" method="POST">
           <label>
@@ -47,18 +59,6 @@
         <p class="muted">
           After you submit, you’ll be redirected back here and the new book will appear in the list.
         </p>
-      </section>
-
-      <section class="card">
-        <h2>Add an author</h2>
-        <form class="form" action="/api/authors" method="POST">
-          <label>
-            Name
-            <input name="name" required placeholder="Barack Obama" />
-          </label>
-          <button type="submit">Create author</button>
-        </form>
-        <p class="muted">After creating an author, use the dropdown above to add a book.</p>
       </section>
 
       <section class="card">
