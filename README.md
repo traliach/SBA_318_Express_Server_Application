@@ -34,6 +34,16 @@ Server starts on `http://localhost:3000`.
   - Add author form (POSTs to `/api/authors`)
   - Add book form (POSTs to `/api/books`)
   - Delete book button (POSTs to `/books/:bookId/delete`)
+- `GET /books/:bookId/edit` — Edit a book (two-step form)
+- `GET /authors` — Manage authors (rename/delete)
+
+## Demo flow (quick test)
+
+1. Open `http://localhost:3000/books`
+2. Create a new author (e.g., “Barack Obama”)
+3. Add a new book and select the author you just created
+4. Click **Edit** on a book and change the title or genre
+5. Click **Delete** on a book you want to remove
 
 ## API endpoints
 
@@ -67,3 +77,13 @@ Server starts on `http://localhost:3000`.
 ## Notes
 
 - Data is stored in memory (arrays). Restarting the server resets data.
+
+## Screenshots
+
+Add your screenshots in a `screenshots/` folder and update the paths below:
+
+```
+![Books page](screenshots/books-page.png)
+![Edit book](screenshots/edit-book.png)
+![Authors page](screenshots/authors-page.png)
+```

@@ -45,5 +45,6 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  const env = process.env.NODE_ENV || "development";
+  console.log(`Server running on http://localhost:${PORT} (${env})`);
 });
