@@ -85,9 +85,12 @@
                   <td><%= b.genre %></td>
                   <td><%= b.year ?? "" %></td>
                   <td>
-                    <form action="/books/<%= b.id %>/delete" method="POST">
-                      <button type="submit">Delete</button>
-                    </form>
+                    <div class="actions">
+                      <a class="btn" href="/books/<%= b.id %>/edit">Edit</a>
+                      <form action="/books/<%= b.id %>/delete" method="POST">
+                        <button class="btn btn-danger" type="submit">Delete</button>
+                      </form>
+                    </div>
                   </td>
                 </tr>
               <% }) %>

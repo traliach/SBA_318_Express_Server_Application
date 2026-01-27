@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit book</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <h1>Edit book</h1>
+        <p class="muted"><a href="/books">Back to Books</a></p>
+      </header>
+
+      <section class="card">
+        <% if (typeof error !== "undefined" && error) { %>
+          <p class="muted"><strong>Error:</strong> <%= error %></p>
+        <% } %>
+
+        <form class="form" action="/books/<%= book.id %>/edit" method="POST">
+          <label>
+            Title
+            <input name="title" value="<%= book.title %>" required />
+          </label>
+
+          <label>
+            Author
+            <select name="authorId">
+              <% authors.forEach((a) => { %>
+                <option value="<%= a.id %>" <%= Number(a.id) === Number(book.authorId) ? "selected" : "" %>>
+                  <%= a.name %>
+                </option>
+              <% }) %>
+            </select>
+          </label>
+
+          <label>
+            Genre
+            <input name="genre" value="<%= book.genre %>" />
+          </label>
+
+          <label>
+            Year
+            <input name="year" type="number" min="0" value="<%= book.year ?? '' %>" />
+          </label>
+
+          <button class="btn btn-primary" type="submit">Save changes</button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
