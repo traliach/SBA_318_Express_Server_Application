@@ -61,6 +61,7 @@
                 <th>Author</th>
                 <th>Genre</th>
                 <th>Year</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -70,6 +71,11 @@
                   <td><%= b.authorName %></td>
                   <td><%= b.genre %></td>
                   <td><%= b.year ?? "" %></td>
+                  <td>
+                    <form action="/books/<%= b.id %>/delete" method="POST">
+                      <button type="submit">Delete</button>
+                    </form>
+                  </td>
                 </tr>
               <% }) %>
             </tbody>

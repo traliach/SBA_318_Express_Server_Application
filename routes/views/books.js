@@ -13,4 +13,17 @@ router.get("/", (req, res) => {
   res.render("books", { books: rows, authors });
 });
 
+// Two-step form action (so we can "DELETE" from an HTML form)
+router.post("/:bookId/delete", (req, res) => {
+  const id = Number(req.params.bookId);
+  const idx = books.findIndex((b) => Number(b.id) === id);
+
+  if (idx === -1) {
+    return res.status(404).render("error", { status: 404, message: "Book not found" });
+  }
+
+  books.splice(idx, 1);
+  res.redirect(303, "/books");
+});
+
 export default router;
