@@ -90,3 +90,16 @@ export function validateNewAuthor(payload) {
 
   return { ok: errors.length === 0, errors, value: { name } };
 }
+
+export function validateAuthorPatch(payload) {
+  const errors = [];
+  const out = {};
+
+  if (payload.name !== undefined) {
+    const name = String(payload.name || "").trim();
+    if (!name) errors.push("name cannot be empty");
+    else out.name = name;
+  }
+
+  return { ok: errors.length === 0, errors, value: out };
+}

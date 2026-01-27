@@ -4,6 +4,7 @@ import booksApiRoutes from "./routes/api/books.js";
 import authorsApiRoutes from "./routes/api/authors.js";
 import reviewsApiRoutes from "./routes/api/reviews.js";
 import booksViewRoutes from "./routes/views/books.js";
+import authorsViewRoutes from "./routes/views/authors.js";
 import notFound from "./middleware/notFound.js";
 import errorHandler from "./middleware/errorHandler.js";
 import requestId from "./middleware/requestId.js";
@@ -32,6 +33,7 @@ app.use("/api/books", booksApiRoutes);
 app.use("/api/authors", authorsApiRoutes);
 app.use("/api/reviews", reviewsApiRoutes);
 app.use("/books", booksViewRoutes);
+app.use("/authors", authorsViewRoutes);
 
 // 404 handler (must be AFTER routes)
 app.use(notFound);
