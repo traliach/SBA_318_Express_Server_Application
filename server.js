@@ -3,8 +3,7 @@ import healthRoutes from "./routes/health.js";
 import booksApiRoutes from "./routes/api/books.js";
 import authorsApiRoutes from "./routes/api/authors.js";
 import reviewsApiRoutes from "./routes/api/reviews.js";
-import booksViewRoutes from "./routes/views/books.js";
-import authorsViewRoutes from "./routes/views/authors.js";
+import viewsRoutes from "./routes/views/index.js";
 import notFound from "./middleware/notFound.js";
 import errorHandler from "./middleware/errorHandler.js";
 import requestId from "./middleware/requestId.js";
@@ -35,8 +34,7 @@ app.get("/", (req, res) => {
 app.use("/api/books", booksApiRoutes);
 app.use("/api/authors", authorsApiRoutes);
 app.use("/api/reviews", reviewsApiRoutes);
-app.use("/books", booksViewRoutes);
-app.use("/authors", authorsViewRoutes);
+app.use("/", viewsRoutes);
 
 // 404 handler (must be AFTER routes)
 app.use(notFound);

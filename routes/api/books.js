@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authors, books } from "../../data/store.js";
-import { filterBooks, findById, newId, validateBookPatch, validateNewBook } from "../../data/helpers.js";
+import { filterBooks, findById, newId, validateNewBook } from "../../data/helpers.js";
 
 const router = Router();
 
@@ -52,19 +52,50 @@ router.patch("/:bookId", (req, res) => {
   const book = findById(books, req.params.bookId);
   if (!book) return res.status(404).json({ error: "Book not found" });
 
-  const validated = validateBookPatch(req.body || {});
-  if (!validated.ok) {
-    return res.status(400).json({ error: "Validation failed", details: validated.errors });
+  const patch = buildBookPatch(req.body || {});
+  if (!patch.ok) {
+    return res.status(400).json({ error: "Validation failed", details: patch.errors });
   }
 
-  if (validated.value.authorId !== undefined) {
-    const author = findById(authors, validated.value.authorId);
+  if (patch.value.authorId !== undefined) {
+    const author = findById(authors, patch.value.authorId);
     if (!author) return res.status(400).json({ error: "authorId does not exist" });
   }
 
-  Object.assign(book, validated.value);
+  Object.assign(book, patch.value);
   res.json(book);
 });
+
+function buildBookPatch(payload) {
+  const errors = [];
+  const out = {};
+
+  if (payload.title !== undefined) {
+    const title = String(payload.title || "").trim();
+    if (!title) errors.push("title cannot be empty");
+    else out.title = title;
+  }
+
+  if (payload.authorId !== undefined) {
+    const authorId = Number(payload.authorId);
+    if (!authorId || Number.isNaN(authorId)) errors.push("authorId must be a valid number");
+    else out.authorId = authorId;
+  }
+
+  if (payload.genre !== undefined) {
+    const genre = String(payload.genre || "").trim();
+    out.genre = genre || "unknown";
+  }
+
+  if (payload.year !== undefined) {
+    const yearRaw = payload.year;
+    const year = yearRaw === "" || yearRaw == null ? undefined : Number(yearRaw);
+    if (year !== undefined && (Number.isNaN(year) || year < 0)) errors.push("year must be a valid number");
+    else out.year = year;
+  }
+
+  return { ok: errors.length === 0, errors, value: out };
+}
 
 // DELETE /api/books/:bookId
 router.delete("/:bookId", (req, res) => {

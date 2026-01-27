@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authors } from "../../data/store.js";
-import { findById, newId, validateAuthorPatch, validateNewAuthor } from "../../data/helpers.js";
+import { findById, newId, validateNewAuthor } from "../../data/helpers.js";
 
 const router = Router();
 
@@ -37,12 +37,12 @@ router.patch("/:authorId", (req, res) => {
   const author = findById(authors, req.params.authorId);
   if (!author) return res.status(404).json({ error: "Author not found" });
 
-  const validated = validateAuthorPatch(req.body || {});
-  if (!validated.ok) {
-    return res.status(400).json({ error: "Validation failed", details: validated.errors });
+  const name = String(req.body?.name || "").trim();
+  if (!name) {
+    return res.status(400).json({ error: "Validation failed", details: ["name cannot be empty"] });
   }
 
-  Object.assign(author, validated.value);
+  author.name = name;
   res.json(author);
 });
 

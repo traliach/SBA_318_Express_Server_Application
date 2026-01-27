@@ -53,40 +53,6 @@ export function validateNewBook(payload) {
   };
 }
 
-// Validate fields for partial updates
-export function validateBookPatch(payload) {
-  const errors = [];
-
-  // Only validate fields that were provided.
-  const out = {};
-
-  if (payload.title !== undefined) {
-    const title = String(payload.title || "").trim();
-    if (!title) errors.push("title cannot be empty");
-    else out.title = title;
-  }
-
-  if (payload.authorId !== undefined) {
-    const authorId = Number(payload.authorId);
-    if (!authorId || Number.isNaN(authorId)) errors.push("authorId must be a valid number");
-    else out.authorId = authorId;
-  }
-
-  if (payload.genre !== undefined) {
-    const genre = String(payload.genre || "").trim();
-    out.genre = genre || "unknown";
-  }
-
-  if (payload.year !== undefined) {
-    const yearRaw = payload.year;
-    const year = yearRaw === "" || yearRaw == null ? undefined : Number(yearRaw);
-    if (year !== undefined && (Number.isNaN(year) || year < 0)) errors.push("year must be a valid number");
-    else out.year = year;
-  }
-
-  return { ok: errors.length === 0, errors, value: out };
-}
-
 // Validate required fields for a new author
 export function validateNewAuthor(payload) {
   const errors = [];
@@ -94,18 +60,4 @@ export function validateNewAuthor(payload) {
   if (!name) errors.push("name is required");
 
   return { ok: errors.length === 0, errors, value: { name } };
-}
-
-// Validate fields for author rename
-export function validateAuthorPatch(payload) {
-  const errors = [];
-  const out = {};
-
-  if (payload.name !== undefined) {
-    const name = String(payload.name || "").trim();
-    if (!name) errors.push("name cannot be empty");
-    else out.name = name;
-  }
-
-  return { ok: errors.length === 0, errors, value: out };
 }
