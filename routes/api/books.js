@@ -37,6 +37,13 @@ router.post("/", (req, res) => {
   };
 
   books.push(book);
+
+  // If a browser submitted the form, redirect back to the page.
+  // API clients (curl/Postman) still get JSON.
+  if (req.is("application/x-www-form-urlencoded") || req.accepts("html")) {
+    return res.redirect(303, "/books");
+  }
+
   res.status(201).json(book);
 });
 
