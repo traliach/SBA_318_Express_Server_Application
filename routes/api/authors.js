@@ -26,15 +26,18 @@ router.post("/", (req, res) => {
   res.status(201).json(author);
 });
 
-router.get("/:authorId", (req, res) => {
-  const author = findById(authors, req.params.authorId);
+// GET /api/authors/:authorId (numbers only)
+router.get(/^\/(\d+)$/, (req, res) => {
+  const authorId = getAuthorId(req);
+  const author = findById(authors, authorId);
   if (!author) return res.status(404).json({ error: "Author not found" });
   res.json(author);
 });
 
-// PATCH /api/authors/:authorId (rename author)
-router.patch("/:authorId", (req, res) => {
-  const author = findById(authors, req.params.authorId);
+// PATCH /api/authors/:authorId (rename author, numbers only)
+router.patch(/^\/(\d+)$/, (req, res) => {
+  const authorId = getAuthorId(req);
+  const author = findById(authors, authorId);
   if (!author) return res.status(404).json({ error: "Author not found" });
 
   const name = String(req.body?.name || "").trim();
@@ -45,5 +48,9 @@ router.patch("/:authorId", (req, res) => {
   author.name = name;
   res.json(author);
 });
+
+function getAuthorId(req) {
+  return req.params.authorId ?? req.params[0];
+}
 
 export default router;

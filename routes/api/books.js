@@ -11,9 +11,10 @@ router.get("/", (req, res) => {
   res.json({ count: results.length, data: results });
 });
 
-// GET /api/books/:bookId
-router.get("/:bookId", (req, res) => {
-  const book = findById(books, req.params.bookId);
+// GET /api/books/:bookId (numbers only)
+router.get(/^\/(\d+)$/, (req, res) => {
+  const bookId = getBookId(req);
+  const book = findById(books, bookId);
   if (!book) return res.status(404).json({ error: "Book not found" });
   res.json(book);
 });
@@ -54,9 +55,10 @@ router.post("/", (req, res) => {
   res.status(201).json(book);
 });
 
-// PATCH /api/books/:bookId (edit book)
-router.patch("/:bookId", (req, res) => {
-  const book = findById(books, req.params.bookId);
+// PATCH /api/books/:bookId (edit book, numbers only)
+router.patch(/^\/(\d+)$/, (req, res) => {
+  const bookId = getBookId(req);
+  const book = findById(books, bookId);
   if (!book) return res.status(404).json({ error: "Book not found" });
 
   const patch = buildBookPatch(req.body || {});
@@ -111,13 +113,18 @@ function cleanText(value) {
   }).trim();
 }
 
-// DELETE /api/books/:bookId
-router.delete("/:bookId", (req, res) => {
-  const idx = books.findIndex((b) => Number(b.id) === Number(req.params.bookId));
+// DELETE /api/books/:bookId (numbers only)
+router.delete(/^\/(\d+)$/, (req, res) => {
+  const bookId = getBookId(req);
+  const idx = books.findIndex((b) => Number(b.id) === Number(bookId));
   if (idx === -1) return res.status(404).json({ error: "Book not found" });
 
   const deleted = books.splice(idx, 1)[0];
   res.json(deleted);
 });
+
+function getBookId(req) {
+  return req.params.bookId ?? req.params[0];
+}
 
 export default router;
