@@ -77,6 +77,8 @@ Server starts on `http://localhost:3000`.
 ## Notes
 
 - Data is stored in memory (arrays). Restarting the server resets data.
+- Book titles and genres are sanitized before saving.
+- API ID routes accept numbers only (e.g., `/api/books/1`).
 
 ## Screenshots
 

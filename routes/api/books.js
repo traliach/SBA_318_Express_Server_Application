@@ -2,8 +2,17 @@ import { Router } from "express";
 import sanitizeHtml from "sanitize-html";
 import { authors, books } from "../../data/store.js";
 import { filterBooks, findById, newId, validateNewBook } from "../../data/helpers.js";
+import { createHttpError } from "../../utils/httpError.js";
 
 const router = Router();
+
+// Enforce numeric IDs for REST-style param routes.
+router.param("bookId", (req, res, next, value) => {
+  if (!/^\d+$/.test(String(value))) {
+    return next(createHttpError(404, "Book not found", { code: "NOT_FOUND" }));
+  }
+  next();
+});
 
 // GET /api/books?genre=&authorId=&q=
 router.get("/", (req, res) => {
@@ -12,15 +21,15 @@ router.get("/", (req, res) => {
 });
 
 // GET /api/books/:bookId (numbers only)
-router.get(/^\/(\d+)$/, (req, res) => {
+router.get("/:bookId", (req, res, next) => {
   const bookId = getBookId(req);
   const book = findById(books, bookId);
-  if (!book) return res.status(404).json({ error: "Book not found" });
+  if (!book) return next(createHttpError(404, "Book not found", { code: "NOT_FOUND" }));
   res.json(book);
 });
 
 // POST /api/books (used by the form on /books)
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
   const body = req.body || {};
   const sanitized = {
     ...body,
@@ -29,11 +38,22 @@ router.post("/", (req, res) => {
   };
   const validated = validateNewBook(sanitized);
   if (!validated.ok) {
-    return res.status(400).json({ error: "Validation failed", details: validated.errors });
+    return next(
+      createHttpError(400, "Validation failed", {
+        code: "VALIDATION_ERROR",
+        details: validated.errors,
+      })
+    );
   }
 
   const author = findById(authors, validated.value.authorId);
-  if (!author) return res.status(400).json({ error: "authorId does not exist" });
+  if (!author) {
+    return next(
+      createHttpError(400, "authorId does not exist", {
+        code: "VALIDATION_ERROR",
+      })
+    );
+  }
 
   const book = {
     id: newId(books),
@@ -56,19 +76,30 @@ router.post("/", (req, res) => {
 });
 
 // PATCH /api/books/:bookId (edit book, numbers only)
-router.patch(/^\/(\d+)$/, (req, res) => {
+router.patch("/:bookId", (req, res, next) => {
   const bookId = getBookId(req);
   const book = findById(books, bookId);
-  if (!book) return res.status(404).json({ error: "Book not found" });
+  if (!book) return next(createHttpError(404, "Book not found", { code: "NOT_FOUND" }));
 
   const patch = buildBookPatch(req.body || {});
   if (!patch.ok) {
-    return res.status(400).json({ error: "Validation failed", details: patch.errors });
+    return next(
+      createHttpError(400, "Validation failed", {
+        code: "VALIDATION_ERROR",
+        details: patch.errors,
+      })
+    );
   }
 
   if (patch.value.authorId !== undefined) {
     const author = findById(authors, patch.value.authorId);
-    if (!author) return res.status(400).json({ error: "authorId does not exist" });
+    if (!author) {
+      return next(
+        createHttpError(400, "authorId does not exist", {
+          code: "VALIDATION_ERROR",
+        })
+      );
+    }
   }
 
   Object.assign(book, patch.value);
@@ -114,17 +145,17 @@ function cleanText(value) {
 }
 
 // DELETE /api/books/:bookId (numbers only)
-router.delete(/^\/(\d+)$/, (req, res) => {
+router.delete("/:bookId", (req, res, next) => {
   const bookId = getBookId(req);
   const idx = books.findIndex((b) => Number(b.id) === Number(bookId));
-  if (idx === -1) return res.status(404).json({ error: "Book not found" });
+  if (idx === -1) return next(createHttpError(404, "Book not found", { code: "NOT_FOUND" }));
 
   const deleted = books.splice(idx, 1)[0];
   res.json(deleted);
 });
 
 function getBookId(req) {
-  return req.params.bookId ?? req.params[0];
+  return req.params.bookId;
 }
 
 export default router;

@@ -1,18 +1,31 @@
 import { Router } from "express";
 import { authors } from "../../data/store.js";
 import { findById, newId, validateNewAuthor } from "../../data/helpers.js";
+import { createHttpError } from "../../utils/httpError.js";
 
 const router = Router();
+
+router.param("authorId", (req, res, next, value) => {
+  if (!/^\d+$/.test(String(value))) {
+    return next(createHttpError(404, "Author not found", { code: "NOT_FOUND" }));
+  }
+  next();
+});
 
 router.get("/", (req, res) => {
   res.json({ count: authors.length, data: authors });
 });
 
 // POST /api/authors (optional, but helpful for creating new authors in the UI)
-router.post("/", (req, res) => {
+router.post("/", (req, res, next) => {
   const validated = validateNewAuthor(req.body || {});
   if (!validated.ok) {
-    return res.status(400).json({ error: "Validation failed", details: validated.errors });
+    return next(
+      createHttpError(400, "Validation failed", {
+        code: "VALIDATION_ERROR",
+        details: validated.errors,
+      })
+    );
   }
 
   const author = { id: newId(authors), name: validated.value.name };
@@ -27,22 +40,27 @@ router.post("/", (req, res) => {
 });
 
 // GET /api/authors/:authorId (numbers only)
-router.get(/^\/(\d+)$/, (req, res) => {
+router.get("/:authorId", (req, res, next) => {
   const authorId = getAuthorId(req);
   const author = findById(authors, authorId);
-  if (!author) return res.status(404).json({ error: "Author not found" });
+  if (!author) return next(createHttpError(404, "Author not found", { code: "NOT_FOUND" }));
   res.json(author);
 });
 
 // PATCH /api/authors/:authorId (rename author, numbers only)
-router.patch(/^\/(\d+)$/, (req, res) => {
+router.patch("/:authorId", (req, res, next) => {
   const authorId = getAuthorId(req);
   const author = findById(authors, authorId);
-  if (!author) return res.status(404).json({ error: "Author not found" });
+  if (!author) return next(createHttpError(404, "Author not found", { code: "NOT_FOUND" }));
 
   const name = String(req.body?.name || "").trim();
   if (!name) {
-    return res.status(400).json({ error: "Validation failed", details: ["name cannot be empty"] });
+    return next(
+      createHttpError(400, "Validation failed", {
+        code: "VALIDATION_ERROR",
+        details: ["name cannot be empty"],
+      })
+    );
   }
 
   author.name = name;
@@ -50,7 +68,7 @@ router.patch(/^\/(\d+)$/, (req, res) => {
 });
 
 function getAuthorId(req) {
-  return req.params.authorId ?? req.params[0];
+  return req.params.authorId;
 }
 
 export default router;
