@@ -1,4 +1,5 @@
 import { Router } from "express";
+import sanitizeHtml from "sanitize-html";
 import { authors, books } from "../../data/store.js";
 import { filterBooks, findById, newId, validateNewBook } from "../../data/helpers.js";
 
@@ -19,7 +20,13 @@ router.get("/:bookId", (req, res) => {
 
 // POST /api/books (used by the form on /books)
 router.post("/", (req, res) => {
-  const validated = validateNewBook(req.body || {});
+  const body = req.body || {};
+  const sanitized = {
+    ...body,
+    title: cleanText(body.title),
+    genre: cleanText(body.genre),
+  };
+  const validated = validateNewBook(sanitized);
   if (!validated.ok) {
     return res.status(400).json({ error: "Validation failed", details: validated.errors });
   }
@@ -71,7 +78,7 @@ function buildBookPatch(payload) {
   const out = {};
 
   if (payload.title !== undefined) {
-    const title = String(payload.title || "").trim();
+    const title = cleanText(payload.title);
     if (!title) errors.push("title cannot be empty");
     else out.title = title;
   }
@@ -83,7 +90,7 @@ function buildBookPatch(payload) {
   }
 
   if (payload.genre !== undefined) {
-    const genre = String(payload.genre || "").trim();
+    const genre = cleanText(payload.genre);
     out.genre = genre || "unknown";
   }
 
@@ -95,6 +102,13 @@ function buildBookPatch(payload) {
   }
 
   return { ok: errors.length === 0, errors, value: out };
+}
+
+function cleanText(value) {
+  return sanitizeHtml(String(value || ""), {
+    allowedTags: [],
+    allowedAttributes: {},
+  }).trim();
 }
 
 // DELETE /api/books/:bookId
